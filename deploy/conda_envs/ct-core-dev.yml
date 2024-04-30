@@ -17,13 +17,12 @@ dependencies:
   - aws-c-http=0.8.1=hbfc29b2_7
   - aws-c-io=0.14.6=h96cd748_2
   - aws-c-mqtt=0.10.3=hffff1cc_2
-  - aws-c-s3=0.5.5=h4893938_0
+  - aws-c-s3=0.5.6=h4893938_0
   - aws-c-sdkutils=0.1.15=h4466546_2
   - aws-checksums=0.1.18=h4466546_2
-  - aws-crt-cpp=0.26.4=h58a74b7_3
-  - aws-sdk-cpp=1.11.267=hb1af6a8_4
+  - aws-crt-cpp=0.26.6=h72b5dc9_1
+  - aws-sdk-cpp=1.11.267=h39730d7_5
   - bcrypt=4.1.2=py312h4b3b743_0
-  - black=24.3.0=py312h7900ff3_0
   - blinker=1.7.0=pyhd8ed1ab_0
   - brotli=1.1.0=hd590300_1
   - brotli-bin=1.1.0=hd590300_1
@@ -43,7 +42,7 @@ dependencies:
   - dbus=1.13.6=h5008d03_3
   - docker-py=7.0.0=pyhd8ed1ab_0
   - entrypoints=0.4=pyhd8ed1ab_0
-  - expat=2.6.2=h59595ed_0
+  - expat=2.6.1=h59595ed_0
   - flake8=7.0.0=pyhd8ed1ab_0
   - font-ttf-dejavu-sans-mono=2.37=hab24e00_0
   - font-ttf-inconsolata=3.000=h77eed37_0
@@ -52,14 +51,14 @@ dependencies:
   - fontconfig=2.14.2=h14ed4e7_0
   - fonts-conda-ecosystem=1=0
   - fonts-conda-forge=1=0
-  - fonttools=4.50.0=py312h98912ed_0
+  - fonttools=4.49.0=py312h98912ed_0
   - freetype=2.12.1=h267a509_2
   - gettext=0.21.1=h27087fc_0
   - gflags=2.2.2=he1b5a44_1004
   - gitdb=4.0.11=pyhd8ed1ab_0
   - gitpython=3.1.43=pyhd8ed1ab_0
-  - glib=2.80.0=hf2295e7_1
-  - glib-tools=2.80.0=hde27a5a_1
+  - glib=2.80.0=hf2295e7_0
+  - glib-tools=2.80.0=hde27a5a_0
   - glog=0.7.0=hed5481d_0
   - graphene=3.3=pyhd8ed1ab_0
   - graphite2=1.3.13=h58526e2_1001
@@ -76,7 +75,7 @@ dependencies:
   - importlib_resources=6.4.0=pyhd8ed1ab_0
   - isort=5.13.2=pyhd8ed1ab_0
   - itsdangerous=2.1.2=pyhd8ed1ab_0
-  - jinja2=3.1.3=pyhd8ed1ab_0
+  - jinja2==3.1.3
   - joblib=1.3.2=pyhd8ed1ab_0
   - keyutils=1.6.1=h166bdaf_0
   - kiwisolver=1.4.5=py312h8572e83_1
@@ -86,21 +85,21 @@ dependencies:
   - ld_impl_linux-64=2.40=h41732ed_0
   - lerc=4.0.0=h27087fc_0
   - libabseil=20240116.1=cxx17_h59595ed_2
-  - libarrow=15.0.2=hb86450c_1_cpu
-  - libarrow-acero=15.0.2=h59595ed_1_cpu
-  - libarrow-dataset=15.0.2=h59595ed_1_cpu
-  - libarrow-flight=15.0.2=hc6145d9_1_cpu
-  - libarrow-flight-sql=15.0.2=h757c851_1_cpu
-  - libarrow-gandiva=15.0.2=hb016d2e_1_cpu
-  - libarrow-substrait=15.0.2=h757c851_1_cpu
+  - libarrow=15.0.2=h176673d_2_cpu
+  - libarrow-acero=15.0.2=hac33072_2_cpu
+  - libarrow-dataset=15.0.2=hac33072_2_cpu
+  - libarrow-flight=15.0.2=hd42f311_2_cpu
+  - libarrow-flight-sql=15.0.2=h9241762_2_cpu
+  - libarrow-gandiva=15.0.2=hd4ab825_2_cpu
+  - libarrow-substrait=15.0.2=h9241762_2_cpu
   - libblas=3.9.0=21_linux64_openblas
   - libbrotlicommon=1.1.0=hd590300_1
   - libbrotlidec=1.1.0=hd590300_1
   - libbrotlienc=1.1.0=hd590300_1
   - libcap=2.69=h0f662aa_0
   - libcblas=3.9.0=21_linux64_openblas
-  - libclang=15.0.7=default_h127d8a8_5
-  - libclang13=15.0.7=default_h5d6823c_5
+  - libclang=15.0.7=default_hb11cfb5_4
+  - libclang13=15.0.7=default_ha2b6cf4_4
   - libcrc32c=1.1.2=h9c3ff4c_0
   - libcups=2.3.3=h4637d8d_4
   - libcurl=8.7.1=hca28451_0
@@ -108,14 +107,14 @@ dependencies:
   - libedit=3.1.20191231=he28a2e2_2
   - libev=4.33=hd590300_2
   - libevent=2.1.12=hf998b51_1
-  - libexpat=2.6.2=h59595ed_0
+  - libexpat=2.6.1=h59595ed_0
   - libffi=3.4.2=h7f98852_5
   - libflac=1.4.3=h59595ed_0
   - libgcc-ng=13.2.0=h807b86a_5
   - libgcrypt=1.10.3=hd590300_0
   - libgfortran-ng=13.2.0=h69a702a_5
   - libgfortran5=13.2.0=ha4646dd_5
-  - libglib=2.80.0=hf2295e7_1
+  - libglib=2.80.0=hf2295e7_0
   - libgomp=13.2.0=h807b86a_5
   - libgoogle-cloud=2.22.0=h9be4e54_1
   - libgoogle-cloud-storage=2.22.0=hc7a4891_1
@@ -132,9 +131,9 @@ dependencies:
   - libogg=1.3.4=h7f98852_1
   - libopenblas=0.3.26=pthreads_h413a1c8_0
   - libopus=1.3.1=h7f98852_1
-  - libparquet=15.0.2=h352af49_1_cpu
+  - libparquet=15.0.2=h6a7eafb_2_cpu
   - libpng=1.6.43=h2797004_0
-  - libpq=16.2=h33b98f1_1
+  - libpq=16.2=h33b98f1_0
   - libprotobuf=4.25.3=h08a7969_0
   - libre2-11=2023.09.01=h5a48ba9_2
   - libsndfile=1.2.2=hc60ed4a_1
@@ -158,6 +157,8 @@ dependencies:
   - mako=1.3.2=pyhd8ed1ab_0
   - markdown=3.6=pyhd8ed1ab_0
   - markupsafe=2.1.5=py312h98912ed_0
+  - matplotlib=3.8.3=py312h7900ff3_0
+  - matplotlib-base=3.8.3=py312he5832f3_0
   - mccabe=0.7.0=pyhd8ed1ab_0
   - mlflow=2.11.3=h7900ff3_0
   - mlflow-skinny=2.11.3=py312h7900ff3_0
@@ -167,10 +168,10 @@ dependencies:
   - mypy_extensions=1.0.0=pyha770c72_0
   - mysql-common=8.0.33=hf1915f5_6
   - mysql-libs=8.0.33=hca2cd23_6
-  - ncurses=6.4.20240210=h59595ed_0
+  - ncurses=6.4=h59595ed_2
   - nspr=4.35=h27087fc_0
   - nss=3.98=h1d7d5a4_0
-  - numpy=1.26.4=py312heda63a1_0
+  - numpy==1.22.4
   - openjpeg=2.5.2=h488ebb8_0
   - openssl=3.2.1=hd590300_1
   - orc=2.0.0=h1e5e2c1_0
@@ -190,7 +191,6 @@ dependencies:
   - pthread-stubs=0.4=h36c2ea0_1001
   - pulseaudio-client=16.1=hb77b528_5
   - pycodestyle=2.11.1=pyhd8ed1ab_0
-  - pycparser=2.22=pyhd8ed1ab_0
   - pyflakes=3.2.0=pyhd8ed1ab_0
   - pynacl=1.5.0=py312h98912ed_3
   - pyparsing=3.1.2=pyhd8ed1ab_0
@@ -212,12 +212,12 @@ dependencies:
   - requests=2.31.0=pyhd8ed1ab_0
   - s2n=1.4.8=h06160fa_0
   - scikit-learn=1.4.1.post1=py312h394d371_0
-  - setuptools=69.2.0=pyhd8ed1ab_0
   - sip=6.7.12=py312h30efb56_0
   - six=1.16.0=pyh6c4a22f_0
+  - snappy=1.1.10=hdb0a2a9_1
   - sqlalchemy=2.0.29=py312h98912ed_0
   - sqlparse=0.4.4=pyhd8ed1ab_0
-  - threadpoolctl=3.4.0=pyhc1e730c_0
+  - threadpoolctl=3.3.0=pyhc1e730c_0
   - tk=8.6.13=noxft_h4845f30_101
   - toml=0.10.2=pyhd8ed1ab_0
   - tomli=2.0.1=pyhd8ed1ab_0
@@ -229,7 +229,7 @@ dependencies:
   - urllib3=2.2.1=pyhd8ed1ab_0
   - websocket-client=1.7.0=pyhd8ed1ab_0
   - werkzeug=3.0.2=pyhd8ed1ab_0
-  - wheel=0.43.0=pyhd8ed1ab_0
+  - wheel=0.42.0=pyhd8ed1ab_0
   - xcb-util=0.4.0=hd590300_1
   - xcb-util-image=0.4.0=h8ee46fc_1
   - xcb-util-keysyms=0.4.0=h8ee46fc_1
@@ -252,7 +252,23 @@ dependencies:
   - yaml=0.2.5=h7f98852_2
   - zlib=1.2.13=hd590300_5
   - zstd=1.5.5=hfc55251_0
-  - pip:
+  - category_encoders==2.4.1
+  - datashader==0.13.0
+  - fsspec==2022.7.1
+  - param==1.12.1
+  - panel==0.13.1
+  - bokeh==2.4.3
+  - holoviews==1.14.9
+  - hvplot==0.8.0
+  - xml==4.9.2
+  - pyjanitor==0.20.9
+  - python-slugify==3.0.4
+  - seaborn==0.11.2
+  - shap==0.41.0
+  - statsmodels==0.13.2
+  - xgboost==1.5.1
+  - openpyxl==3.0.9
+- pip:
       - alabaster==0.7.16
       - anyio==4.3.0
       - argon2-cffi==23.1.0
@@ -263,26 +279,24 @@ dependencies:
       - attrs==23.2.0
       - babel==2.14.0
       - beautifulsoup4==4.12.3
+      - black==24.3.0
       - bleach==6.1.0
-      - build==1.1.1
+      - build==1.2.1
       - comm==0.2.2
-      - cypari==2.5.4
       - debugpy==1.8.1
       - decorator==5.1.1
       - defusedxml==0.7.1
       - docutils==0.20.1
       - executing==2.0.1
       - fastjsonschema==2.19.1
-      - flask==3.0.3
+      - flask==3.0.2
       - fqdn==1.5.1
-      - fxrays==1.3.5
       - h11==0.14.0
-      - httpcore==1.0.5
+      - httpcore==1.0.4
       - httpx==0.27.0
       - imagesize==1.4.1
-      - iniconfig==2.0.0
-      - ipykernel==6.29.4
-      - ipython==8.23.0
+      - ipykernel==6.29.3
+      - ipython==8.22.2
       - ipywidgets==8.1.2
       - isoduration==20.11.0
       - jedi==0.19.1
@@ -302,33 +316,26 @@ dependencies:
       - jupyterlab-pygments==0.3.0
       - jupyterlab-server==2.25.4
       - jupyterlab-widgets==3.0.10
-      - knot-floer-homology==1.2
-      - low-index==1.2
-      - matplotlib==3.8.4
       - matplotlib-inline==0.1.6
       - mistune==3.0.2
       - nbclient==0.10.0
       - nbconvert==7.16.3
-      - nbformat==5.10.4
+      - nbformat==5.10.3
       - nest-asyncio==1.6.0
-      - networkx==3.3
       - notebook==7.1.2
       - notebook-shim==0.2.4
       - overrides==7.7.0
       - pandocfilters==1.5.1
-      - parso==0.8.4
+      - parso==0.8.3
       - pexpect==4.9.0
-      - plink==2.4.2
-      - pluggy==1.4.0
       - prompt-toolkit==3.0.43
       - psutil==5.9.8
       - ptyprocess==0.7.0
       - pure-eval==0.2.2
       - pyarrow==15.0.2
+      - pycparser==2.21
       - pygments==2.17.2
-      - pypng==0.20220715.0
       - pyproject-hooks==1.0.0
-      - pytest==8.1.1
       - python-json-logger==2.0.7
       - pyzmq==25.1.2
       - qtconsole==5.5.1
@@ -338,14 +345,12 @@ dependencies:
       - rfc3986-validator==0.1.1
       - rpds-py==0.18.0
       - scipy==1.13.0
-      - send2trash==1.8.3
+      - send2trash==1.8.2
+      - setuptools==69.2.0
       - smmap==5.0.1
-      - snappy==3.1.1
-      - snappy-manifolds==1.2
       - sniffio==1.3.1
       - snowballstemmer==2.2.0
       - soupsieve==2.5
-      - spherogram==2.2.1
       - sphinx==7.2.6
       - sphinx-rtd-theme==2.0.0
       - sphinxcontrib-applehelp==1.0.8
@@ -366,4 +371,7 @@ dependencies:
       - webencodings==0.5.1
       - widgetsnbextension==4.0.10
       - zipp==3.18.1
-prefix: /home/dhikshita/miniconda3/envs/mle-capstone-dev
+      - XlsxWriter==3.0.3
+      - selenium==4.3.0
+      - webdriver_manager==3.8.3
+prefix: /home/swetha/miniconda3/envs/mle-capstone-dev

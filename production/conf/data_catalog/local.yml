@@ -5,13 +5,19 @@ datasets:
       format: csv
       uri: ${core.data_base_path}/raw/sales/orders.csv
       driver_params: {}
-  
+
     product:
       type: ds
       format: csv
       uri: ${core.data_base_path}/raw/sales/prod_master.csv
       driver_params: {}
-  
+
+    housing:
+      type: ds
+      format: csv
+      uri: ${core.data_base_path}/raw/housing/housing.csv
+      driver_params: {}
+
   cleaned:
     orders:
       type: ds
