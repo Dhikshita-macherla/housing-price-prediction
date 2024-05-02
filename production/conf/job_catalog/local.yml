@@ -3,20 +3,18 @@ jobs:
     stages:
       - name: "clean-base-tables"
         tasks:
-          - name: "product"
-            params: {}
-          - name: "orders"
+          - name: "housing"
             params: {}
 
       - name: "clean-derivative-tables"
         tasks:
-          - name: "sales"
+          - name: "housing"
             params: {}
       - name: "train-test-split"
         tasks:
           - name: "train-test"
             params:
-              target: unit_price
+              target: median_house_value
               test_size: 0.2
 
   - name: feat-engg
@@ -36,7 +34,26 @@ jobs:
         tasks:
           - name: "train-model"
             params:
-              sampling_fraction: 0.1
+              random_forest:
+                param_distributions:
+                  n_estimators: randint(low=1, high=200)
+                  max_features": randint(low=1, high=8)
+                n_iter: 10
+                cv: 5
+                scoring: "neg_mean_squared_error"
+                random_state: 42
+              grid_search:
+                param_grid:
+                  n_estimators: [3, 10, 30]
+                  max_features": [2, 4, 6, 8]
+                  bootstrap: [False]
+                  n_estimators: [3, 10]
+                  max_features: [2, 3, 4]
+                cv: 5
+                scoring: "neg_mean_squared_error"
+                return_train_score: True
+
+
 
   - name: model-eval
     stages:
