@@ -21,6 +21,14 @@ Subpackages
 Submodules
 ----------
 
+ta\_lib.new\_attr module
+------------------------
+
+.. automodule:: ta_lib.new_attr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ta\_lib.version module
 ----------------------
 

@@ -5,6 +5,8 @@ import logging
 from ta_lib.core.api import (load_dataset,
                              load_pipeline, register_processor, save_dataset, DEFAULT_ARTIFACTS_PATH)
 from ta_lib.regression.api import RegressionComparison
+logger = logging.getLogger(__name__)
+
 
 @register_processor("model-eval", "score-model")
 def score_model(context, params):
@@ -31,7 +33,7 @@ def score_model(context, params):
     - Export performance metrics and comparison report for the model predictions.
 
     """
-    logging.info("Scoring a pre_trained model")
+    logger.info("Scoring a pre_trained model")
     input_features_ds = "test/housing/features"
     input_target_ds = "test/housing/target"
     output_ds = "score/housing/output"
@@ -39,12 +41,12 @@ def score_model(context, params):
     artifacts_folder = DEFAULT_ARTIFACTS_PATH
 
     # load test datasets
-    logging.info("Loading test datasets")
+    logger.info("Loading test datasets")
     test_X = load_dataset(context, input_features_ds)
     test_y = load_dataset(context, input_target_ds)
 
     # load the feature pipeline and training pipelines
-    logging.info("Loading pipelines")
+    logger.info("Loading pipelines")
     full_pipeline = load_pipeline(op.join(artifacts_folder, "features.joblib"))
     lin_reg_ppln = load_pipeline(op.join(artifacts_folder, "lin_reg_pipeline.joblib"))
     dtree_reg_ppln = load_pipeline(op.join(artifacts_folder, "dtree_reg_pipeline.joblib"))
@@ -52,7 +54,7 @@ def score_model(context, params):
     grid_search = load_pipeline(op.join(artifacts_folder, "grid_search.joblib"))
 
     # transform the test dataset
-    logging.info("Predicting using pipelines")
+    logger.info("Predicting using pipelines")
     test_X_pred = pd.DataFrame()
     test_X_pred["lin_y_pred"] = lin_reg_ppln.predict(test_X)
     test_X_pred['dtree_pred'] = dtree_reg_ppln.predict(test_X)
@@ -61,10 +63,10 @@ def score_model(context, params):
     print(test_X_pred)
     test_X = test_X.join(test_X_pred)
     print(test_X)
-    logging.info("Saving the scored datasets")
+    logger.info("Saving the scored datasets")
     save_dataset(context, test_X, output_ds)
 
-    logging.info("Generating model comparison report")
+    logger.info("Generating model comparison report")
     model_pipelines = ['LinReg', 'Dtree', 'RandomizedSearchCV', 'GridSearch']
     predictions = [
         test_X["lin_y_pred"],
@@ -80,5 +82,5 @@ def score_model(context, params):
     report_metrics = model_comparison_report_1.perf_metrics()
     metrics = model_comparison_report_1.get_report(file_path="production/reports/ta_reg_comparison")
     print(model_comparison_report_1.performance_metrics)
-    logging.info("Scoring done")
+    logger.info("Scoring done")
 

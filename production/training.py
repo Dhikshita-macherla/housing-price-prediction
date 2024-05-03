@@ -1,5 +1,6 @@
 """Processors for the model training step of the worklow."""
 import logging
+import logging.config
 import os.path as op
 from sklearn.pipeline import Pipeline
 import numpy as np
@@ -9,6 +10,7 @@ from ta_lib.core.api import (
     save_pipeline,
     DEFAULT_ARTIFACTS_PATH
 )
+from sklearn.model_selection import GridSearchCV
 import ta_lib.eda.api as eda
 import pandas as pd
 from ta_lib.regression.api import SKLStatsmodelOLS
@@ -32,18 +34,18 @@ def train_model(context, params):
     artifacts_folder: Path to folder to store artifacts
 
     """
-    logging.info("Training a regression model")
+    logger.info("Training a regression model")
     artifacts_folder = DEFAULT_ARTIFACTS_PATH
 
     input_features_ds = "train/housing/features"
     input_target_ds = "train/housing/target"
 
     # load training datasets
-    logging.info("Loading training dataset")
+    logger.info("Loading training dataset")
     train_X = load_dataset(context, input_features_ds)
     train_y = load_dataset(context, input_target_ds)
 
-    logging.info("Performing EDA")
+    logger.info("Performing EDA")
     out_plot = eda.get_density_plots(pd.DataFrame(train_X))
     print(out_plot)
     reports.create_report({'univariate': out_plot}, name='production/reports/feature_analysis_univariate')
@@ -61,93 +63,89 @@ def train_model(context, params):
     reports.create_report(all_plots, name='production/reports/feature_analysis_bivariate')
     reports.feature_interactions(train_X, 'production/reports/feature_interaction_report.html')
     reports.data_exploration(train_X, train_y, 'production/reports/data_exploration_report.html', y_continuous=True)
-    logging.info("Reports generated and saved successfully")
+    logger.info("Reports generated and saved successfully")
 
     # create training pipeline
-    logging.info("Creating training pipeline for Linear Regression")
+    logger.info("Creating training pipeline for Linear Regression")
     lin_reg_ppln = Pipeline([
         ('linreg_estimator', SKLStatsmodelOLS())
     ])
-    print(train_X)
     lin_reg_ppln.fit(train_X, train_y.values.ravel())
 
     # save fitted training pipeline
-    logging.info("Saved fitted training pipeline")
+    logger.info("Saved fitted training pipeline")
     save_pipeline(lin_reg_ppln, op.abspath(op.join(artifacts_folder, "lin_reg_pipeline.joblib")))
-    logging.info("Linear Regression done")
+    logger.info("Linear Regression done")
+    print("LR done")
 
-    logging.info("Creating training pipeline for decision tree")
+    logger.info("Creating training pipeline for decision tree")
     from sklearn.tree import DecisionTreeRegressor
     dtree_reg_ppln = Pipeline([
         ('dtreereg_estimator', DecisionTreeRegressor())
     ])
     dtree_reg_ppln.fit(train_X, train_y.values.ravel())
-    logging.info("Saved fitted training pipeline")
+    logger.info("Saved fitted training pipeline")
     save_pipeline(dtree_reg_ppln, op.abspath(op.join(artifacts_folder, "dtree_reg_pipeline.joblib")))
-    logging.info("Decision Tree Regression done")
+    logger.info("Decision Tree Regression done")
+    print("DT done")
 
-    logging.info("Model tuning")
-    logging.info("Randomized Search CV for Random forest regressor")
+    logger.info("Model tuning")
+    logger.info("Randomized Search CV for Random forest regressor")
     from sklearn.model_selection import RandomizedSearchCV
     from sklearn.ensemble import RandomForestRegressor
     from scipy.stats import randint
-    forest_reg = RandomForestRegressor(random_state=42)
-
+    forest_reg = RandomForestRegressor(random_state=params["rand_regressor"]["random_state"])
     param_distribs = {
         "n_estimators": randint(low=1, high=200),
         "max_features": randint(low=1, high=8),
     }
+
     rand_search = RandomizedSearchCV(
         forest_reg,
         param_distributions=param_distribs,
-        n_iter=10,
-        cv=5,
-        scoring="neg_mean_squared_error",
-        random_state=42,
+        n_iter=params["random_forest"]["n_iter"],
+        cv=params["random_forest"]["cv"],
+        scoring=params["random_forest"]["scoring"],
+        random_state=params["random_forest"]["random_state"],
     )
     rand_search.fit(train_X, train_y.values.ravel())
     print("Best params from Randomized Search CV", rand_search.best_params_)
     cvres = rand_search.cv_results_
-    for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
-        print(np.sqrt(-mean_score), params)
+    for mean_score, params_cv in zip(cvres["mean_test_score"], cvres["params"]):
+        print(np.sqrt(-mean_score), params_cv)
 
     feature_importances = rand_search.best_estimator_.feature_importances_
     sorted(zip(feature_importances, train_X.columns), reverse=True)
     final_model_rand = rand_search.best_estimator_
     print("Best estimator for Randomized Search CV: ", final_model_rand)
-    logging.info("Saved fitted training pipeline")
+    logger.info("Saved fitted training pipeline")
     save_pipeline(final_model_rand, op.abspath(op.join(artifacts_folder, "rand_search.joblib")))
-    logging.info('Randomized Search CV done')
+    logger.info('Randomized Search CV done')
+    print("Rand_search")
+    print(params)
+    logger.info("Grid Search CV for Random forest regressor")
+    param_grid = params["grid_search"]["param_grid"]
 
-    logging.info("Grid Search CV for Random forest regressor")
-    from sklearn.model_selection import GridSearchCV
-    from sklearn.ensemble import RandomForestRegressor
-    forest_reg = RandomForestRegressor(random_state=42)
-
-    param_grid = [
-        # try 12 (3×4) combinations of hyperparameters
-        {"n_estimators": [3, 10, 30], "max_features": [2, 4, 6, 8]},
-        # then try 6 (2×3) combinations with bootstrap set as False
-        {"bootstrap": [False], "n_estimators": [3, 10], "max_features": [2, 3, 4]},
-    ]
     grid_search = GridSearchCV(
         forest_reg,
         param_grid,
-        cv=5,
-        scoring="neg_mean_squared_error",
-        return_train_score=True,
+        cv=params["grid_search"]["cv"],
+        scoring=params["grid_search"]["scoring"],
+        return_train_score=params["grid_search"]["return_train_score"],
     )
+
     grid_search.fit(train_X, train_y.values.ravel())
     print("Best params for Grid Search CV: ", grid_search.best_params_)
     cvres = grid_search.cv_results_
-    for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
-        print(np.sqrt(-mean_score), params)
+    for mean_score, params_cv in zip(cvres["mean_test_score"], cvres["params"]):
+        print(np.sqrt(-mean_score), params_cv)
 
     feature_importances = grid_search.best_estimator_.feature_importances_
     sorted(zip(feature_importances, train_X.columns), reverse=True)
     final_model_grid = grid_search.best_estimator_
     print("Best estimator for Grid Search CV: ", final_model_grid)
-    logging.info("Saved fitted training pipeline")
+    logger.info("Saved fitted training pipeline")
     save_pipeline(final_model_grid, op.abspath(op.join(artifacts_folder, "grid_search.joblib")))
-    logging.info("Grid Search done")
-    logging.info("Training done")
+    logger.info("Grid Search done")
+    logger.info("Training done")
+    print("Training done")

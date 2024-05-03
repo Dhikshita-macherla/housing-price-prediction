@@ -3,6 +3,7 @@
 The processors in this step, apply the various cleaning steps identified
 during EDA to create the training datasets.
 """
+import yaml
 import numpy as np
 from sklearn.model_selection import StratifiedShuffleSplit
 import logging
@@ -14,7 +15,11 @@ from ta_lib.core.api import (
     string_cleaning
 )
 from scripts import binned_selling_price
+'''with open('production/conf/logging/production.yml', 'r') as stream:
+    config = yaml.load(stream, Loader=yaml.FullLoader)
 
+logging.config.dictConfig(config)'''
+logger = logging.getLogger(__name__)
 
 @register_processor("data-cleaning", "housing")
 def clean_house_table(context, params):
@@ -38,19 +43,19 @@ def clean_house_table(context, params):
     6. Returns the cleaned housing dataset.
 
     """
-    logging.info("Cleaning housing dataset")
+    logger.info("Cleaning housing dataset")
     input_dataset = "raw/housing"
     output_dataset = "cleaned/housing"
-    logging.info("Loading dataset from raw/housing")
+    logger.info("Loading dataset from raw/housing")
 
     # load dataset
     housing_df = load_dataset(context, input_dataset)
-    logging.info("Identifying string columns")
+    logger.info("Identifying string columns")
     str_cols = list(
         set(housing_df.select_dtypes('object').columns.to_list())
         - set(['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'median_house_value'])
     )
-    logging.info("Cleaning dataset...")
+    logger.info("Cleaning dataset...")
     housing_df_clean = (
         housing_df
         # set dtypes
@@ -60,9 +65,9 @@ def clean_house_table(context, params):
     )
 
     # save the dataset
-    logging.info("Saving cleaned dataset to cleaned/housing")
+    logger.info("Saving cleaned dataset to cleaned/housing")
     save_dataset(context, housing_df_clean, output_dataset)
-    logging.info("Housing dataset cleaned and saved successfully")
+    logger.info("Housing dataset cleaned and saved successfully")
     return housing_df_clean
 
 
@@ -89,7 +94,7 @@ def create_training_datasets(context, params):
     - Save the features to the specified output path for train and test features.
     - Save the target to the specified output path for train and test target.
     """
-    logging.info("Housing dataset into train and test sets")
+    logger.info("Housing dataset into train and test sets")
     input_dataset = "cleaned/housing"
     output_train_features = "train/housing/features"
     output_train_target = "train/housing/target"
@@ -97,11 +102,11 @@ def create_training_datasets(context, params):
     output_test_target = "test/housing/target"
 
     # load dataset
-    logging.info("Loading dataset from cleaned/housing")
+    logger.info("Loading dataset from cleaned/housing")
     housing_df_processed = load_dataset(context, input_dataset)
 
     # split the data
-    logging.info("Splitting the dataset into train and test")
+    logger.info("Splitting the dataset into train and test")
     splitter = StratifiedShuffleSplit(
         n_splits=1, test_size=params["test_size"], random_state=context.random_seed
     )
@@ -110,7 +115,7 @@ def create_training_datasets(context, params):
     )
 
     # split train dataset into features and target
-    logging.info("Splitting train dataset into features and target")
+    logger.info("Splitting train dataset into features and target")
     target_col = params["target"]
     train_X, train_y = (
         housing_df_train
@@ -119,12 +124,12 @@ def create_training_datasets(context, params):
     )
 
     # save the train dataset
-    logging.info("Saving the train datasets")
+    logger.info("Saving the train datasets")
     save_dataset(context, train_X, output_train_features)
     save_dataset(context, train_y, output_train_target)
 
     # split test dataset into features and target
-    logging.info("Splitting test dataset into features and target")
+    logger.info("Splitting test dataset into features and target")
     test_X, test_y = (
         housing_df_test
         # split the dataset to train and test
@@ -132,7 +137,10 @@ def create_training_datasets(context, params):
     )
 
     # save the datasets
-    logging.info("Saving the test datasets")
+    logger.info("Saving the test datasets")
     save_dataset(context, test_X, output_test_features)
     save_dataset(context, test_y, output_test_target)
-    logging.info("Completed cleaning and splitting housing dataset")
+    logger.info("Completed cleaning and splitting housing dataset")
+
+
+print("Completed cleaning and splitting housing dataset")

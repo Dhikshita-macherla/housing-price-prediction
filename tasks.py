@@ -776,6 +776,14 @@ def setup_ci_env(c, platform=PLATFORM, force=False):
         c.run(f"""python -m pip install -e "{HERE}" """)
 
 
+@task(name="run-production")
+def run_production(c, platform=PLATFORM, env=DEV_ENV):
+    env_name = _get_env_name(env)
+    with py_env(c, env_name):
+        c.run("python production/cli.py job run")
+        c.run("radon cc 'production/'")
+
+
 _create_task_collection(
     "dev",
     setup_env,
@@ -788,6 +796,7 @@ _create_task_collection(
     setup_info,
     _build_docker_image,
     setup_ci_env,
+    run_production,
 )
 
 
