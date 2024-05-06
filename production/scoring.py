@@ -1,40 +1,86 @@
 """Processors for the model scoring/evaluation step of the worklow."""
 import os.path as op
-
-from ta_lib.core.api import (get_dataframe,
-                             get_feature_names_from_column_transformer,
-                             get_package_path, hash_object, load_dataset,
+import pandas as pd
+import logging
+from ta_lib.core.api import (load_dataset,
                              load_pipeline, register_processor, save_dataset, DEFAULT_ARTIFACTS_PATH)
+from ta_lib.regression.api import RegressionComparison
+logger = logging.getLogger(__name__)
 
 
 @register_processor("model-eval", "score-model")
-def score_model(context, params):   
-    """Score a pre-trained model."""
+def score_model(context, params):
+    """
+    Score a pre-trained model.
 
-    input_features_ds = "test/sales/features"
-    input_target_ds = "test/sales/target"
-    output_ds = "score/sales/output"
-    
+    Parameters:
+    - context: The context object containing information about the execution environment.
+    - params: Additional parameters or configuration settings for scoring the model.
+
+    Returns:
+    - None
+
+    Input features dataset: "test/housing/features"
+    Input target dataset: "test/housing/target"
+    Output dataset: "score/housing/output"
+    Artifacts folder: DEFAULT_ARTIFACTS_PATH
+
+    Description:
+    - Load test datasets from the specified path
+    - Load the feature pipeline and training pipelines from the artifacts folder.
+    - Transform the test features dataset using the loaded pipelines to generate predictions.
+    - Save the transformed test features dataset to the specified output dataset path.
+    - Export performance metrics and comparison report for the model predictions.
+
+    """
+    logger.info("Scoring a pre_trained model")
+    input_features_ds = "test/housing/features"
+    input_target_ds = "test/housing/target"
+    output_ds = "score/housing/output"
+
     artifacts_folder = DEFAULT_ARTIFACTS_PATH
 
     # load test datasets
+    logger.info("Loading test datasets")
     test_X = load_dataset(context, input_features_ds)
     test_y = load_dataset(context, input_target_ds)
 
     # load the feature pipeline and training pipelines
-    curated_columns = load_pipeline(op.join(artifacts_folder, "curated_columns.joblib"))
-    features_transformer = load_pipeline(op.join(artifacts_folder, "features.joblib"))
-    model_pipeline = load_pipeline(op.join(artifacts_folder, "train_pipeline.joblib"))
+    logger.info("Loading pipelines")
+    full_pipeline = load_pipeline(op.join(artifacts_folder, "features.joblib"))
+    lin_reg_ppln = load_pipeline(op.join(artifacts_folder, "lin_reg_pipeline.joblib"))
+    dtree_reg_ppln = load_pipeline(op.join(artifacts_folder, "dtree_reg_pipeline.joblib"))
+    rand_search = load_pipeline(op.join(artifacts_folder, "rand_search.joblib"))
+    grid_search = load_pipeline(op.join(artifacts_folder, "grid_search.joblib"))
 
     # transform the test dataset
-    test_X = get_dataframe(
-        features_transformer.transform(test_X),
-        get_feature_names_from_column_transformer(features_transformer),
-    )
-    test_X = test_X[curated_columns]
-
-    # make a prediction
-    test_X["yhat"] = model_pipeline.predict(test_X)
-
-    # store the predictions for any further processing.
+    logger.info("Predicting using pipelines")
+    test_X_pred = pd.DataFrame()
+    test_X_pred["lin_y_pred"] = lin_reg_ppln.predict(test_X)
+    test_X_pred['dtree_pred'] = dtree_reg_ppln.predict(test_X)
+    test_X_pred['rand_search'] = rand_search.predict(test_X)
+    test_X_pred['grid_search'] = grid_search.predict(test_X)
+    print(test_X_pred)
+    test_X = test_X.join(test_X_pred)
+    print(test_X)
+    logger.info("Saving the scored datasets")
     save_dataset(context, test_X, output_ds)
+
+    logger.info("Generating model comparison report")
+    model_pipelines = ['LinReg', 'Dtree', 'RandomizedSearchCV', 'GridSearch']
+    predictions = [
+        test_X["lin_y_pred"],
+        test_X['dtree_pred'],
+        test_X['rand_search'],
+        test_X['grid_search']
+    ]
+    predictions_dict = dict(zip(model_pipelines, predictions))
+    model_comparison_report_1 = RegressionComparison(
+        y=test_y, yhats=predictions_dict
+    )
+
+    report_metrics = model_comparison_report_1.perf_metrics()
+    metrics = model_comparison_report_1.get_report(file_path="production/reports/ta_reg_comparison")
+    print(model_comparison_report_1.performance_metrics)
+    logger.info("Scoring done")
+
